@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#24102f">
+<title>Yüce Elif Hanım'ın Sudokusu 👑</title>
+<meta name="description" content="Sudoku Krallığı'na hoş geldiniz, Yüce Elif Hanım Hazretleri.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg1: #24102f; --bg2: #3d1748; --bg3: #5a2150;
+    --gold: #f2c14e; --gold-d: #c8922a; --cream: #fff8ea; --ink: #2a1238;
+    --muted: #e2cfe9; --plum: #6b3fa0; --red: #d43f5e;
+    --cell: #fffaf0; --peer: #f6ead0; --same: #f0d58a; --sel: #f2c14e; --thin: #dccbb0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh;
+    font-family: "Baloo 2", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--cream);
+    background: radial-gradient(120% 80% at 50% 0%, var(--bg3) 0%, var(--bg2) 45%, var(--bg1) 100%) fixed;
+    background-color: var(--bg1);
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  [hidden] { display: none !important; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 22px 16px 40px; }
+  button { font: inherit; touch-action: manipulation; }
+  button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  /* ---------- Giriş ---------- */
+  .giris { text-align: center; }
+  .tac { font-size: 56px; display: inline-block; line-height: 1; animation: sall 3s ease-in-out infinite; filter: drop-shadow(0 6px 18px rgba(242,193,78,.45)); }
+  @keyframes sall { 50% { transform: translateY(-6px) rotate(6deg); } }
+  .ust { letter-spacing: .25em; font-size: 13px; font-weight: 700; color: var(--gold); margin-top: 6px; }
+  h1 { font-family: "Playfair Display", Georgia, serif; font-weight: 700; font-size: clamp(28px, 8.4vw, 40px); line-height: 1.12; margin: 6px 0 8px; }
+  h1 em { font-style: italic; font-weight: 800; color: var(--gold); }
+  .unvan { color: var(--muted); font-size: 16px; line-height: 1.4; margin: 0 auto 26px; max-width: 420px; }
+  .cerceve {
+    display: inline-block; padding: 9px; border-radius: 16px; position: relative; max-width: 100%;
+    background: linear-gradient(135deg, #ffe8a3, #d9a035 40%, #ffe08a 60%, #b9821f);
+    box-shadow: 0 14px 40px rgba(0,0,0,.4), inset 0 0 0 2px rgba(255,255,255,.35);
+    transform: rotate(-1.5deg);
+  }
+  .cerceve img { display: block; width: 100%; max-width: 420px; height: auto; border-radius: 9px; }
+  .cerceve::before { content: "👑"; position: absolute; top: -24px; left: -12px; font-size: 34px; transform: rotate(-20deg); }
+  .altyazi { font-size: 14px; color: var(--muted); font-style: italic; margin: 12px auto 18px; max-width: 400px; line-height: 1.4; }
+  .ferman-kart {
+    background: var(--cream); color: var(--ink); border-radius: 14px; padding: 14px 16px; margin: 0 0 22px;
+    text-align: left; box-shadow: 0 8px 24px rgba(0,0,0,.25); font-size: 16px; line-height: 1.4;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .ferman-kart b { color: #8a2b52; }
+  .ferman-kart .rulo { font-size: 24px; line-height: 1.2; }
+  h2 { font-family: "Playfair Display", Georgia, serif; font-size: 22px; margin: 0 0 12px; line-height: 1.25; }
+  .seviyeler { display: grid; gap: 10px; }
+  .seviye {
+    display: flex; align-items: center; gap: 14px; text-align: left; width: 100%; color: var(--cream);
+    background: rgba(255,255,255,.07); border: 1px solid rgba(242,193,78,.35); border-radius: 16px;
+    padding: 12px 16px; cursor: pointer; transition: transform .1s, background .2s;
+  }
+  .seviye:hover { background: rgba(255,255,255,.12); }
+  .seviye:active { transform: scale(.98); }
+  .seviye .e { font-size: 32px; line-height: 1; }
+  .seviye b { display: block; font-size: 19px; line-height: 1.2; }
+  .seviye small { color: var(--muted); font-size: 14px; }
+  .seviye .rekor { margin-left: auto; font-size: 13px; color: var(--gold); white-space: nowrap; }
+  .devam {
+    margin-top: 12px; width: 100%; font-weight: 800; font-size: 17px; color: var(--ink); background: var(--gold);
+    border: 0; border-radius: 16px; padding: 14px; cursor: pointer; box-shadow: 0 4px 0 var(--gold-d);
+  }
+  .devam:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--gold-d); }
+  .hazirlik { min-height: 24px; margin-top: 10px; color: var(--gold); font-weight: 700; }
+  .kurallar { font-size: 14px; color: var(--muted); margin-top: 8px; line-height: 1.45; }
+  footer { text-align: center; color: var(--muted); font-size: 14px; margin-top: 22px; }
+
+  /* ---------- Oyun ---------- */
+  .ust-bar { display: flex; align-items: center; gap: 12px; margin: 10px 0 12px; }
+  .avatar {
+    position: relative; width: 50px; height: 50px; flex: none; border-radius: 50%; border: 3px solid var(--gold);
+    background: url(biz.jpg) 39.5% 36% / 300% auto no-repeat; box-shadow: 0 4px 12px rgba(0,0,0,.35);
+  }
+  .avatar::after { content: "👑"; position: absolute; top: -19px; left: 50%; transform: translateX(-50%) rotate(-8deg); font-size: 20px; }
+  .kim { flex: 1; min-width: 0; line-height: 1.15; }
+  .kim b { font-family: "Playfair Display", Georgia, serif; font-size: 18px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kim small { color: var(--muted); font-size: 14px; }
+  .sure { font-weight: 800; font-size: 18px; background: rgba(255,255,255,.08); border-radius: 99px; padding: 4px 12px; font-variant-numeric: tabular-nums; }
+  .ikon-btn { font-size: 20px; background: rgba(255,255,255,.08); border: 0; border-radius: 12px; width: 42px; height: 42px; cursor: pointer; color: var(--cream); flex: none; }
+  .ferman {
+    background: var(--cream); color: var(--ink); border-radius: 12px; padding: 8px 12px; font-size: 15px; line-height: 1.35;
+    min-height: 46px; display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+  }
+  .ferman.yeni { animation: fermanPop .4s; }
+  @keyframes fermanPop { from { transform: scale(.96); opacity: .3; } }
+  .sayaclar { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; color: var(--muted); margin: 0 2px 8px; }
+  .sayaclar b { color: var(--cream); }
+
+  .tahta {
+    display: grid; grid-template-columns: repeat(9, 1fr); width: 100%; aspect-ratio: 1;
+    background: var(--cell); border: 3px solid var(--ink); border-radius: 10px; overflow: hidden;
+    user-select: none; -webkit-user-select: none; touch-action: manipulation;
+    box-shadow: 0 12px 30px rgba(0,0,0,.35);
+  }
+  .hucre {
+    position: relative; display: flex; align-items: center; justify-content: center; min-width: 0;
+    border-right: 1px solid var(--thin); border-bottom: 1px solid var(--thin);
+    background: var(--cell); color: var(--plum); font-weight: 700; font-size: clamp(19px, 6vw, 30px);
+    cursor: pointer; transition: background .12s; line-height: 1;
+  }
+  .hucre.c2, .hucre.c5 { border-right: 2.5px solid var(--ink); }
+  .hucre.c8 { border-right: 0; }
+  .hucre.r2, .hucre.r5 { border-bottom: 2.5px solid var(--ink); }
+  .hucre.r8 { border-bottom: 0; }
+  .hucre.verilen { color: var(--ink); font-weight: 800; }
+  .hucre.komsu { background: var(--peer); }
+  .hucre.ayni { background: var(--same); }
+  .hucre.secili { background: var(--sel); }
+  .hucre.yanlis { color: var(--red); }
+  .hucre.yanlis:not(.secili) { background: #fde3e8; }
+  .hucre.parla { animation: parla .8s; }
+  @keyframes parla { 40% { background: #ffe28a; transform: scale(1.08); } }
+  .hucre.salla { animation: salla .35s; }
+  @keyframes salla { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+  .notlar { position: absolute; inset: 1px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); pointer-events: none; }
+  .notlar span { display: flex; align-items: center; justify-content: center; font-size: clamp(8px, 2.3vw, 12px); color: #7d6a85; font-weight: 600; line-height: 1; }
+  .notlar span.vurgu { color: var(--ink); font-weight: 800; background: rgba(240,213,138,.75); border-radius: 3px; }
+
+  .araclar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 12px 0 8px; }
+  .arac {
+    color: var(--cream); background: transparent; border: 0; border-radius: 12px; padding: 6px 2px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; font-size: 13px; font-weight: 600; line-height: 1.2;
+  }
+  .arac .i { font-size: 22px; }
+  .arac.acik { background: rgba(242,193,78,.2); color: var(--gold); }
+  .arac:active { transform: scale(.94); }
+  .tuslar { display: grid; grid-template-columns: repeat(9, 1fr); gap: 5px; }
+  .tus {
+    background: var(--cream); color: var(--ink); border: 0; border-radius: 12px; padding: 7px 0 5px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; box-shadow: 0 3px 0 #cdb98f; line-height: 1; min-width: 0;
+  }
+  .tus b { font-size: clamp(22px, 6.4vw, 30px); font-weight: 800; }
+  .tus small { font-size: 11px; color: #8d7a92; margin-top: 3px; }
+  .tus:active { transform: translateY(2px); box-shadow: 0 1px 0 #cdb98f; }
+  .tus.bitti { opacity: .28; pointer-events: none; }
+  .tus.notmod b { color: var(--plum); font-size: clamp(16px, 4.6vw, 22px); }
+
+  /* ---------- Zafer ---------- */
+  .zafer {
+    position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 16px;
+    background: rgba(20,8,26,.8); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); animation: fade .3s;
+  }
+  @keyframes fade { from { opacity: 0; } }
+  .zafer-kart {
+    width: 100%; max-width: 440px; max-height: calc(100vh - 32px); overflow: auto; text-align: center;
+    background: linear-gradient(180deg, #4a1b52, #2b1236); border: 2px solid var(--gold); border-radius: 22px;
+    padding: 22px 18px; box-shadow: 0 20px 60px rgba(0,0,0,.5); animation: pop .5s cubic-bezier(.3,1.5,.5,1);
+  }
+  @keyframes pop { from { transform: scale(.8); opacity: 0; } }
+  .zafer-kart h2 { font-size: 32px; color: var(--gold); margin: 2px 0 4px; }
+  .zafer-kart p { margin: 0 0 10px; line-height: 1.4; }
+  .zafer-kart .cerceve { transform: rotate(1.5deg); margin: 14px 0 8px; }
+  .zafer-kart .cerceve::before { content: "🏆"; }
+  .unvan-z { color: var(--gold); font-weight: 800; font-size: 17px; }
+  .rekor-z { display: inline-block; background: var(--pink, #ff9fc8); color: var(--ink); border-radius: 99px; padding: 2px 10px; font-weight: 800; font-size: 14px; margin-bottom: 8px; }
+  .istat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+  .istat div { background: rgba(255,255,255,.07); border-radius: 12px; padding: 8px 4px; }
+  .istat b { display: block; font-size: 20px; }
+  .istat small { color: var(--muted); font-size: 12px; line-height: 1.2; display: block; }
+  .odul { background: var(--cream); color: var(--ink); border-radius: 12px; padding: 10px 12px; font-weight: 700; margin-bottom: 14px; line-height: 1.35; }
+  .zafer-btn { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .btn { font-weight: 800; font-size: 16px; border: 0; border-radius: 14px; padding: 12px; cursor: pointer; }
+  .btn.altin { background: var(--gold); color: var(--ink); box-shadow: 0 4px 0 var(--gold-d); }
+  .btn.sade { background: rgba(255,255,255,.1); color: var(--cream); }
+  .konfeti { position: fixed; top: -40px; z-index: 30; pointer-events: none; animation: dus 3s linear both; }
+  @keyframes dus { to { transform: translateY(calc(100vh + 80px)) rotate(var(--r)); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tac, .hucre.parla, .hucre.salla, .ferman.yeni { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= GİRİŞ ================= -->
+<main class="wrap giris" id="giris">
+  <div class="tac" aria-hidden="true">👑</div>
+  <div class="ust">SUDOKU KRALLIĞI</div>
+  <h1>Hoş geldiniz,<br><em>Yüce Elif Hanım</em> Hazretleri</h1>
+  <p class="unvan">Sudoku Krallığı'nın mutlak hükümdarı · Uyku Bakanı · Sandviç Komutanı · Nöbet Gazisi</p>
+
+  <div class="cerceve"><img src="biz.jpg" alt="Yüce Elif Hanım ve sadık nedimi sandviç yerken" width="1024" height="768"></div>
+  <p class="altyazi">Saray arşivinden: Yüce Elif Hanım ve sadık nedimi, resmî sandviç törenindeyken. 🥖</p>
+
+  <div class="ferman-kart"><span class="rulo" aria-hidden="true">📜</span><span id="girisFerman"></span></div>
+
+  <h2>Bugün hangi uyku derinliğinde oynamak istersiniz, efendim?</h2>
+  <div class="seviyeler">
+    <button class="seviye" type="button" data-z="kolay"><span class="e">😴</span><span><b>Şekerleme</b><small>Kolay · göz kapakları yarı açık</small></span><span class="rekor" data-rekor="kolay"></span></button>
+    <button class="seviye" type="button" data-z="orta"><span class="e">🛌</span><span><b>Öğle Uykusu</b><small>Orta · yastık gerekli</small></span><span class="rekor" data-rekor="orta"></span></button>
+    <button class="seviye" type="button" data-z="zor"><span class="e">🐻</span><span><b>Kış Uykusu</b><small>Zor · ayılar bile zorlanır</small></span><span class="rekor" data-rekor="zor"></span></button>
+  </div>
+  <button class="devam" id="devamBtn" type="button" hidden></button>
+  <div class="hazirlik" id="hazirlik" aria-live="polite"></div>
+  <p class="kurallar">Kurallar: her satır, sütun ve 3×3 kutuda 1'den 9'a kadar her rakam bir kez bulunur. Gerisi Yüce Hanım'ın takdirine kalmıştır.</p>
+  <footer>Saray Yazılım Dairesi tarafından sevgiyle hazırlanmıştır. 💛</footer>
+</main>
+
+<!-- ================= OYUN ================= -->
+<main class="wrap" id="oyun" hidden>
+  <div class="ust-bar">
+    <div class="avatar" aria-hidden="true"></div>
+    <div class="kim"><b>Yüce Elif Hanım</b><small id="seviyeAd"></small></div>
+    <div class="sure" id="sure">00:00</div>
+    <button class="ikon-btn" id="sarayBtn" type="button" aria-label="Saraya dön">🏰</button>
+  </div>
+
+  <div class="ferman" id="ferman"><span aria-hidden="true">📜</span><span id="fermanYazi" aria-live="polite"></span></div>
+  <div class="sayaclar">
+    <span>Sudokunun hataları: <b id="hata">0</b></span>
+    <span>Danışman ipuçları: <b id="ipucu">0</b></span>
+  </div>
+
+  <div class="tahta" id="tahta" role="grid" aria-label="Sudoku tahtası"></div>
+
+  <div class="araclar">
+    <button class="arac" id="geriBtn" type="button"><span class="i">↶</span>Geri al</button>
+    <button class="arac" id="silBtn" type="button"><span class="i">⌫</span>Sil</button>
+    <button class="arac" id="notBtn" type="button"><span class="i">✏️</span>Not: <span id="notDurum">Kapalı</span></button>
+    <button class="arac" id="ipucuBtn" type="button"><span class="i">💡</span>Danışman</button>
+  </div>
+  <div class="tuslar" id="tuslar"></div>
+</main>
+
+<!-- ================= ZAFER ================= -->
+<div class="zafer" id="zafer" hidden>
+  <div class="zafer-kart" role="dialog" aria-modal="true" aria-labelledby="zaferBaslik">
+    <h2 id="zaferBaslik">Zafer! 🏆</h2>
+    <p>Yüce Elif Hanım sudokuyu fethetti. Kareler teslim oldu, rakamlar biat etti, saray davulları çalıyor. 🥁</p>
+    <div class="unvan-z" id="zUnvan"></div>
+    <div class="cerceve"><img src="biz.jpg" alt="Yüce Elif Hanım ve sadık nedimi" width="1024" height="768"></div>
+    <div><span class="rekor-z" id="zRekor" hidden>✨ Yeni saray rekoru!</span></div>
+    <div class="istat">
+      <div><b id="zSure">00:00</b><small>Süre</small></div>
+      <div><b id="zHata">0</b><small>Sudokunun hataları</small></div>
+      <div><b id="zIpucu">0</b><small>Danışman ipuçları</small></div>
+    </div>
+    <div class="odul">🎁 Ödülünüz: kesintisiz 9 saat uyku + 1 adet saray sandviçi 🥖</div>
+    <div class="zafer-btn">
+      <button class="btn altin" id="tekrarBtn" type="button">Yeni sudoku</button>
+      <button class="btn sade" id="zSarayBtn" type="button">Saraya dön</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ================= Metinler =================
+  const ZORLUK = {
+    kolay: { ad: "Şekerleme",   emoji: "😴", verilen: 40 },
+    orta:  { ad: "Öğle Uykusu", emoji: "🛌", verilen: 32 },
+    zor:   { ad: "Kış Uykusu",  emoji: "🐻", verilen: 26 }
+  };
+  const FERMANLAR = [
+    "<b>Ferman:</b> Bugünden itibaren Yüce Elif Hanım'ı uyandırmak kesinlikle yasaktır.",
+    "<b>Ferman:</b> Sudokuda yapılan her hata, sudokunun kendi suçudur.",
+    "<b>Ferman:</b> Saray mutfağında her an bir adet sandviç hazır bulundurulacaktır. 🥖",
+    "<b>Ferman:</b> Uyku sayacı görevini başarıyla tamamlamış ve saray müzesine kaldırılmıştır.",
+    "<b>Ferman:</b> “Bir şey soracağım” diye başlayan cümleler, Yüce Hanım uyanana kadar ertelenir."
+  ];
+  const BASLA = [
+    "Saray kâtibi hazır. Kareler huzurunuzda hizaya geçti.",
+    "Sudoku huzurunuzda, efendim. Rakamlar heyecandan titriyor.",
+    "Bütün kareler Yüce Elif Hanım'ı saygıyla selamlar. 🙇"
+  ];
+  const HATA = [
+    "Bu hata kesinlikle sudokunun hatası. Sorumlu kare zindana atıldı. ⛓️",
+    "Saray matematikçisi kovuldu. Yüce Elif Hanım asla yanılmaz.",
+    "O sayı aslında doğruydu, kurallar yanlış. Kurallar yeniden yazılıyor.",
+    "Kare, Yüce Hanım'ın rakamını taşıyacak kadar güçlü değildi.",
+    "Bu bir test hamlesiydi, değil mi efendim? Kesin öyleydi.",
+    "Uykudan kalma bir göz kayması. Saray hekimi “normal” dedi.",
+    "Sudoku bu hamleyi hak etmedi. Ceza olarak kırmızıya boyandı."
+  ];
+  const TEBRIK = [
+    "Bir bölge daha fethedildi! Saray şairleri destan yazmaya başladı. 📜",
+    "Halk sokaklarda sandviç dağıtıyor! 🥖",
+    "Saray davulcuları bu zafer için özel ritim besteledi. 🥁",
+    "Bu hamle tarih kitaplarına geçti. Sayfa 9, satır 9.",
+    "Teslim olan kareler Yüce Hanım'a bağlılık yemini etti."
+  ];
+  const KUCUK = [
+    "Kusursuz hamle. Saray ayakta alkışlıyor. 👏",
+    "Rakam yerine oturdu, sarayı huzur kapladı.",
+    "Kare teşekkür etti: “Bu onuru bana bahşettiğiniz için minnettarım.”",
+    "Bu hamleyi saray ressamı tabloya döküyor. 🎨"
+  ];
+  const IPUCU = [
+    "Saray danışmanı kulağınıza fısıldadı. Kimse duymadı, merak etmeyin. 🤫",
+    "Danışman: “Efendim, siz zaten bulacaktınız, ben sadece hızlandırdım.”",
+    "İpucu kayıtlara “Yüce Hanım zaten biliyordu” diye geçti.",
+    "Danışman ipucunu verdi ve saygıyla geri çekildi. 🙇"
+  ];
+  const MUHUR = [
+    "Bu kare saray mührüyle kilitli, efendim. 🔏",
+    "Bu rakam zaten doğru. Doğruya dokunulmaz."
+  ];
+  const UYKU = [
+    "Yüce Hanım düşünüyor… ya da uyuyor. İkisi de saygıdeğer. 💤",
+    "Saray sessizliğe büründü. Kimse Yüce Hanım'ın şekerlemesini bölemez.",
+    "Kareler bekliyor. Acele yok, uyku her şeyden önce gelir. 😴"
+  ];
+
+  // ================= Yardımcılar =================
+  const $ = id => document.getElementById(id);
+  const rastgele = a => a[Math.floor(Math.random() * a.length)];
+  function karistir(a) {
+    a = a.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+  const kutu = i => Math.floor(Math.floor(i / 9) / 3) * 3 + Math.floor((i % 9) / 3);
+  const pad = n => String(n).padStart(2, "0");
+  function sureYaz(ms) {
+    const s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sn = s % 60;
+    return h ? `${h}:${pad(m)}:${pad(sn)}` : `${pad(m)}:${pad(sn)}`;
+  }
+  const ek = d => (d === 6 || d === 9) ? "lar" : "ler";
+
+  // ================= Sudoku motoru =================
+  function popc(m) { let c = 0; while (m) { m &= m - 1; c++; } return c; }
+  function coz(g, limit, rastgeleSira) {
+    const R = new Array(9).fill(0), C = new Array(9).fill(0), K = new Array(9).fill(0);
+    for (let i = 0; i < 81; i++) {
+      const d = g[i]; if (!d) continue;
+      const r = Math.floor(i / 9), c = i % 9, k = kutu(i), b = 1 << d;
+      if ((R[r] | C[c] | K[k]) & b) return { say: 0, ilk: null };
+      R[r] |= b; C[c] |= b; K[k] |= b;
+    }
+    let say = 0, ilk = null;
+    (function rec() {
+      let en = -1, enMask = 0, enN = 10;
+      for (let i = 0; i < 81; i++) {
+        if (g[i]) continue;
+        const r = Math.floor(i / 9), c = i % 9;
+        const mask = ~(R[r] | C[c] | K[kutu(i)]) & 0x3FE;
+        const n = popc(mask);
+        if (n < enN) { en = i; enMask = mask; enN = n; if (n <= 1) break; }
+      }
+      if (en < 0) { say++; if (!ilk) ilk = g.slice(); return; }
+      if (enN === 0) return;
+      const r = Math.floor(en / 9), c = en % 9, k = kutu(en);
+      let ds = [];
+      for (let d = 1; d <= 9; d++) if (enMask & (1 << d)) ds.push(d);
+      if (rastgeleSira) ds = karistir(ds);
+      for (const d of ds) {
+        const b = 1 << d;
+        g[en] = d; R[r] |= b; C[c] |= b; K[k] |= b;
+        rec();
+        g[en] = 0; R[r] &= ~b; C[c] &= ~b; K[k] &= ~b;
+        if (say >= limit) return;
+      }
+    })();
+    return { say, ilk };
+  }
+  function uret(verilen) {
+    const cozum = coz(new Array(81).fill(0), 1, true).ilk;
+    const b = cozum.slice();
+    let kalan = 81;
+    for (const i of karistir([...Array(81).keys()])) {
+      if (kalan <= verilen) break;
+      const yedek = b[i]; b[i] = 0;
+      if (coz(b.slice(), 2, false).say !== 1) b[i] = yedek; else kalan--;
+    }
+    return { bulmaca: b, cozum };
+  }
+
+  // ================= Durum & kayıt =================
+  const ANAHTAR = "elif-sudoku-v1", REKOR = "elif-sudoku-rekor";
+  let S = null;
+  function kaydet() { if (!S) return; try { localStorage.setItem(ANAHTAR, JSON.stringify(S)); } catch (e) {} }
+  function yukle() {
+    try { const s = JSON.parse(localStorage.getItem(ANAHTAR)); if (s && s.cozum && s.cozum.length === 81) return s; } catch (e) {}
+    return null;
+  }
+  function rekorlar() { try { return JSON.parse(localStorage.getItem(REKOR)) || {}; } catch (e) { return {}; } }
+
+  // ================= Tahta =================
+  const hucreler = [], tuslar = [];
+  for (let i = 0; i < 81; i++) {
+    const el = document.createElement("div");
+    el.className = `hucre r${Math.floor(i / 9)} c${i % 9}`;
+    el.setAttribute("role", "gridcell");
+    el.innerHTML = '<span class="sayi"></span><div class="notlar">' + "<span></span>".repeat(9) + "</div>";
+    el.sayi = el.firstChild; el.notSpan = el.lastChild.children;
+    el.addEventListener("click", () => { if (!S || S.bitti) return; S.secili = i; hareket(); ciz(); });
+    $("tahta").appendChild(el); hucreler.push(el);
+  }
+  for (let d = 1; d <= 9; d++) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "tus"; b.setAttribute("aria-label", String(d));
+    b.innerHTML = `<b>${d}</b><small></small>`;
+    b.addEventListener("click", () => sayiGir(d));
+    $("tuslar").appendChild(b); tuslar[d] = b;
+  }
+
+  function ciz() {
+    if (!S) return;
+    const sec = S.secili, secV = sec != null ? S.deger[sec] : 0;
+    const sr = sec != null ? Math.floor(sec / 9) : -1, sc = sec != null ? sec % 9 : -1, sk = sec != null ? kutu(sec) : -1;
+    for (let i = 0; i < 81; i++) {
+      const el = hucreler[i], v = S.deger[i], r = Math.floor(i / 9), c = i % 9;
+      el.classList.toggle("verilen", !!S.bulmaca[i]);
+      el.classList.toggle("yanlis", !!v && v !== S.cozum[i]);
+      el.classList.toggle("secili", i === sec);
+      el.classList.toggle("komsu", sec != null && i !== sec && (r === sr || c === sc || kutu(i) === sk));
+      el.classList.toggle("ayni", !!secV && i !== sec && v === secV);
+      const t = v ? String(v) : "";
+      if (el.sayi.textContent !== t) el.sayi.textContent = t;
+      const n = v ? 0 : S.notlar[i];
+      for (let d = 1; d <= 9; d++) {
+        const s = el.notSpan[d - 1], var_ = !!(n & (1 << d)), tt = var_ ? String(d) : "";
+        if (s.textContent !== tt) s.textContent = tt;
+        s.classList.toggle("vurgu", var_ && d === secV);
+      }
+      el.setAttribute("aria-label", `${r + 1}. satır, ${c + 1}. sütun${v ? ": " + v : ", boş"}`);
+    }
+    for (let d = 1; d <= 9; d++) {
+      let n = 0;
+      for (let i = 0; i < 81; i++) if (S.deger[i] === d && S.cozum[i] === d) n++;
+      tuslar[d].lastChild.textContent = 9 - n;
+      tuslar[d].classList.toggle("bitti", n === 9);
+      tuslar[d].classList.toggle("notmod", !!S.notMod);
+    }
+    $("hata").textContent = S.hata;
+    $("ipucu").textContent = S.ipucu;
+    $("notBtn").classList.toggle("acik", !!S.notMod);
+    $("notDurum").textContent = S.notMod ? "Açık" : "Kapalı";
+    $("seviyeAd").textContent = `${ZORLUK[S.zorluk].emoji} ${ZORLUK[S.zorluk].ad}`;
+    $("sure").textContent = sureYaz(S.sure);
+  }
+
+  function ferman(msg) {
+    const el = $("ferman");
+    $("fermanYazi").textContent = msg;
+    el.classList.remove("yeni"); void el.offsetWidth; el.classList.add("yeni");
+  }
+  let sonHareket = Date.now(), uykuGosterildi = false;
+  function hareket() { sonHareket = Date.now(); uykuGosterildi = false; }
+
+  function gecmisEkle(i) {
+    S.gecmis.push({ i, d: S.deger[i], n: S.notlar.slice() });
+    if (S.gecmis.length > 60) S.gecmis.shift();
+  }
+  function notTemizle(i, d) {
+    const r = Math.floor(i / 9), c = i % 9, k = kutu(i);
+    for (let j = 0; j < 81; j++) {
+      if (Math.floor(j / 9) === r || j % 9 === c || kutu(j) === k) S.notlar[j] &= ~(1 << d);
+    }
+  }
+  function parlat(j) {
+    const el = hucreler[j];
+    el.classList.remove("parla"); void el.offsetWidth; el.classList.add("parla");
+    setTimeout(() => el.classList.remove("parla"), 900);
+  }
+  function grupKontrol(i) {
+    const r = Math.floor(i / 9), c = i % 9, k = kutu(i);
+    const gruplar = [[], [], []];
+    for (let j = 0; j < 81; j++) {
+      if (Math.floor(j / 9) === r) gruplar[0].push(j);
+      if (j % 9 === c) gruplar[1].push(j);
+      if (kutu(j) === k) gruplar[2].push(j);
+    }
+    const tamam = gruplar.filter(g => g.every(j => S.deger[j] === S.cozum[j]));
+    new Set(tamam.flat()).forEach(parlat);
+    return tamam.length > 0;
+  }
+  const kazandiMi = () => S.deger.every((v, i) => v === S.cozum[i]);
+  const kilitli = i => !!S.bulmaca[i] || (!!S.deger[i] && S.deger[i] === S.cozum[i]);
+
+  // ================= Hamleler =================
+  function sayiGir(d) {
+    if (!S || S.bitti) return;
+    if (S.secili == null) { ferman("Önce bir kare seçin, efendim. 👆"); return; }
+    const i = S.secili;
+    if (kilitli(i)) { ferman(rastgele(MUHUR)); hareket(); ciz(); return; }
+    hareket();
+    if (S.notMod) {
+      if (S.deger[i]) return;
+      gecmisEkle(i); S.notlar[i] ^= (1 << d); ciz(); kaydet(); return;
+    }
+    if (S.deger[i] === d) return;
+    gecmisEkle(i);
+    S.deger[i] = d; S.notlar[i] = 0;
+    if (d !== S.cozum[i]) {
+      S.hata++;
+      ferman(rastgele(HATA));
+      const el = hucreler[i]; el.classList.remove("salla"); void el.offsetWidth; el.classList.add("salla");
+    } else {
+      notTemizle(i, d);
+      let adet = 0; for (let j = 0; j < 81; j++) if (S.deger[j] === d && S.cozum[j] === d) adet++;
+      const grup = grupKontrol(i);
+      if (adet === 9) ferman(`Bütün ${d}'${ek(d)} teslim oldu! Rakamlar Yüce Hanım'a biat etti.`);
+      else if (grup) ferman(rastgele(TEBRIK));
+      else if (Math.random() < 0.15) ferman(rastgele(KUCUK));
+    }
+    ciz(); kaydet();
+    if (kazandiMi()) kazan();
+  }
+  function sil() {
+    if (!S || S.bitti || S.secili == null) return;
+    const i = S.secili;
+    if (kilitli(i)) { ferman(rastgele(MUHUR)); return; }
+    if (!S.deger[i] && !S.notlar[i]) return;
+    gecmisEkle(i); S.deger[i] = 0; S.notlar[i] = 0;
+    hareket(); ciz(); kaydet();
+  }
+  function geriAl() {
+    if (!S || S.bitti) return;
+    const h = S.gecmis.pop();
+    if (!h) { ferman("Geri alınacak bir şey yok. Yüce Hanım'ın kararları zaten geri alınmaz. 😌"); return; }
+    S.deger[h.i] = h.d; S.notlar = h.n; S.secili = h.i;
+    hareket(); ciz(); kaydet();
+  }
+  function ipucuVer() {
+    if (!S || S.bitti) return;
+    let i = S.secili;
+    if (i == null || kilitli(i)) {
+      const bos = [];
+      for (let j = 0; j < 81; j++) if (S.deger[j] !== S.cozum[j]) bos.push(j);
+      if (!bos.length) return;
+      i = rastgele(bos);
+    }
+    gecmisEkle(i);
+    S.deger[i] = S.cozum[i]; S.notlar[i] = 0; notTemizle(i, S.deger[i]);
+    S.ipucu++; S.secili = i; hareket();
+    ferman(rastgele(IPUCU));
+    parlat(i); grupKontrol(i);
+    ciz(); kaydet();
+    if (kazandiMi()) kazan();
+  }
+  function notDegistir() { if (!S || S.bitti) return; S.notMod = !S.notMod; ciz(); kaydet(); }
+
+  // ================= Ekranlar =================
+  function rekorGoster() {
+    const r = rekorlar();
+    document.querySelectorAll("[data-rekor]").forEach(el => {
+      const z = el.dataset.rekor;
+      el.textContent = r[z] ? `🏆 ${sureYaz(r[z])}` : "";
+    });
+  }
+  function devamGuncelle() {
+    const s = yukle(), b = $("devamBtn");
+    if (s && !s.bitti) {
+      b.hidden = false;
+      b.textContent = `▶ Kaldığınız yerden devam edin (${ZORLUK[s.zorluk].ad} · ${sureYaz(s.sure)})`;
+    } else b.hidden = true;
+    rekorGoster();
+  }
+  function oyunuAc() {
+    $("giris").hidden = true; $("zafer").hidden = true; $("oyun").hidden = false;
+    $("hazirlik").textContent = "";
+    sonTik = performance.now(); hareket(); ciz(); window.scrollTo(0, 0);
+  }
+  function girisAc() {
+    kaydet();
+    $("oyun").hidden = true; $("zafer").hidden = true; $("giris").hidden = false;
+    $("girisFerman").innerHTML = rastgele(FERMANLAR);
+    devamGuncelle(); window.scrollTo(0, 0);
+  }
+  function yeniOyun(z) {
+    $("hazirlik").textContent = "Saray kâtibi sudokuyu hazırlıyor… ✍️";
+    setTimeout(() => {
+      const { bulmaca, cozum } = uret(ZORLUK[z].verilen);
+      S = { zorluk: z, bulmaca, cozum, deger: bulmaca.slice(), notlar: new Array(81).fill(0),
+            secili: null, notMod: false, hata: 0, ipucu: 0, sure: 0, bitti: false, gecmis: [] };
+      kaydet(); oyunuAc(); ferman(rastgele(BASLA));
+    }, 60);
+  }
+  function kazan() {
+    S.bitti = true; S.secili = null; ciz(); kaydet();
+    const r = rekorlar(), yeniRekor = !r[S.zorluk] || S.sure < r[S.zorluk];
+    if (yeniRekor) { r[S.zorluk] = S.sure; try { localStorage.setItem(REKOR, JSON.stringify(r)); } catch (e) {} }
+    const toplam = S.hata + S.ipucu;
+    $("zUnvan").textContent = toplam === 0 ? "Unvan: Kusursuz Sudoku Sultanı 👑"
+      : toplam <= 3 ? "Unvan: Rakamlar Diyarının Hükümdarı ⚜️"
+      : "Unvan: Sudokunun Hatalarını Affeden Merhametli Hükümdar 🕊️";
+    $("zSure").textContent = sureYaz(S.sure);
+    $("zHata").textContent = S.hata;
+    $("zIpucu").textContent = S.ipucu;
+    $("zRekor").hidden = !yeniRekor;
+    ferman("Zafer! Kareler teslim oldu. 🏆");
+    setTimeout(() => { $("zafer").hidden = false; konfeti(); }, 700);
+  }
+  function konfeti() {
+    const em = ["👑", "🥖", "✨", "🎉", "💤", "⭐", "💛"];
+    for (let i = 0; i < 46; i++) {
+      const s = document.createElement("span");
+      s.className = "konfeti"; s.textContent = rastgele(em);
+      s.style.left = (Math.random() * 94) + "vw";
+      s.style.fontSize = (18 + Math.random() * 18) + "px";
+      s.style.setProperty("--r", (Math.random() * 720 - 360) + "deg");
+      s.style.animationDuration = (2.4 + Math.random() * 2.2) + "s";
+      s.style.animationDelay = (Math.random() * 1.2) + "s";
+      document.body.appendChild(s);
+      s.addEventListener("animationend", () => s.remove());
+    }
+  }
+
+  // ================= Olaylar =================
+  document.querySelectorAll(".seviye").forEach(b => b.addEventListener("click", () => yeniOyun(b.dataset.z)));
+  $("devamBtn").addEventListener("click", () => {
+    S = yukle(); if (!S) return;
+    oyunuAc(); ferman("Tekrar hoş geldiniz, efendim. Kareler sizi çok özledi.");
+  });
+  $("sarayBtn").addEventListener("click", girisAc);
+  $("zSarayBtn").addEventListener("click", girisAc);
+  $("tekrarBtn").addEventListener("click", () => yeniOyun(S ? S.zorluk : "kolay"));
+  $("geriBtn").addEventListener("click", geriAl);
+  $("silBtn").addEventListener("click", sil);
+  $("notBtn").addEventListener("click", notDegistir);
+  $("ipucuBtn").addEventListener("click", ipucuVer);
+
+  document.addEventListener("keydown", e => {
+    if (!S || $("oyun").hidden || S.bitti) return;
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { e.preventDefault(); geriAl(); return; }
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key >= "1" && e.key <= "9") { e.preventDefault(); sayiGir(Number(e.key)); }
+    else if (e.key === "Backspace" || e.key === "Delete" || e.key === "0") { e.preventDefault(); sil(); }
+    else if (e.key === "n" || e.key === "N") notDegistir();
+    else if (e.key.startsWith("Arrow")) {
+      e.preventDefault();
+      let i = S.secili == null ? 40 : S.secili, r = Math.floor(i / 9), c = i % 9;
+      if (e.key === "ArrowUp") r = (r + 8) % 9;
+      if (e.key === "ArrowDown") r = (r + 1) % 9;
+      if (e.key === "ArrowLeft") c = (c + 8) % 9;
+      if (e.key === "ArrowRight") c = (c + 1) % 9;
+      S.secili = r * 9 + c; hareket(); ciz();
+    }
+  });
+
+  // ================= Saat =================
+  let sonTik = performance.now(), sonKayit = 0;
+  setInterval(() => {
+    const t = performance.now(), dt = t - sonTik; sonTik = t;
+    if (!S || S.bitti || $("oyun").hidden || document.hidden) return;
+    S.sure += Math.min(dt, 2000);
+    $("sure").textContent = sureYaz(S.sure);
+    if (t - sonKayit > 5000) { kaydet(); sonKayit = t; }
+    if (!uykuGosterildi && Date.now() - sonHareket > 45000) { uykuGosterildi = true; ferman(rastgele(UYKU)); }
+  }, 500);
+  document.addEventListener("visibilitychange", () => { sonTik = performance.now(); if (document.hidden) kaydet(); });
+
+  // ================= Başlat =================
+  $("girisFerman").innerHTML = rastgele(FERMANLAR);
+  devamGuncelle();
+</script>
+</body>
+</html>
